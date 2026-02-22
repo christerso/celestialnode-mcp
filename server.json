@@ -1,0 +1,23 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
+  "name": "io.github.christerso/celestial-node",
+  "description": "Real-time space data — ISS/Tiangong tracking, crew in space, rocket launches, space news, Mars missions & weather, 1M+ star catalog, near-Earth asteroids, satellites, and more from celestialnode.com",
+  "version": "1.0.0",
+  "repository": {
+    "url": "https://github.com/christerso/celestialnode-mcp",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registry_name": "npm",
+      "name": "celestialnode-mcp",
+      "version": "1.0.0",
+      "runtime": "node",
+      "transport": [
+        {
+          "type": "stdio"
+        }
+      ]
+    }
+  ]
+}
