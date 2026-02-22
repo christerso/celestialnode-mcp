@@ -1,12 +1,33 @@
-# celestialnode-mcp
+[![npm version](https://img.shields.io/npm/v/celestialnode-mcp.svg)](https://www.npmjs.com/package/celestialnode-mcp) [![MCP Registry](https://img.shields.io/badge/MCP-Registry-blue)](https://registry.modelcontextprotocol.io/servers/io.github.christerso/celestial-node) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-MCP server for real-time space data from [Celestial Node](https://celestialnode.com).
+# Celestial Node MCP
+
+An MCP server for real-time space data from [Celestial Node](https://celestialnode.com).
 
 Gives AI assistants access to 18 read-only tools covering ISS/Tiangong tracking, crew in space, rocket launches, space news, Mars missions, a 1M+ star catalog, near-Earth asteroids, satellites, and more.
 
+## About Celestial Node
+
+[Celestial Node](https://celestialnode.com) is a comprehensive space data platform that aggregates real-time information from space agencies worldwide. It offers:
+
+- **Space Station Tracking** - Real-time positions of the ISS and Tiangong space station
+- **Crew Information** - Current astronauts, cosmonauts, and taikonauts in orbit
+- **Rocket Launches** - Upcoming launches from providers worldwide
+- **Space News** - Curated news from NASA, ESA, CNSA, JAXA, Roscosmos, and ISRO
+- **Mars Missions** - All 18 Mars missions with instruments and discoveries
+- **Mars Weather** - Surface conditions including temperature, pressure, and wind
+- **Star Catalog** - 1M+ stars from the ESA Gaia mission
+- **Near-Earth Objects** - Asteroid tracking and close approaches
+- **Satellites** - Search and track satellites with re-entry predictions
+- **Space Encyclopedia** - Comprehensive database of spacecraft, missions, and engines
+
 ## Quick Start
 
-### Claude Desktop
+### Without API Key
+
+Anonymous usage is limited to 25 requests per hour.
+
+**Claude Desktop**
 
 Add to `~/.config/claude/claude_desktop_config.json`:
 
@@ -21,11 +42,47 @@ Add to `~/.config/claude/claude_desktop_config.json`:
 }
 ```
 
-### Claude Code
+**Claude Code**
 
 ```bash
 claude mcp add celestial-node -- npx -y celestialnode-mcp
 ```
+
+### With API Key
+
+Register at [celestialnode.com/register](https://celestialnode.com/register) for higher rate limits.
+
+**Claude Desktop**
+
+```json
+{
+  "mcpServers": {
+    "celestial-node": {
+      "command": "npx",
+      "args": ["-y", "celestialnode-mcp"],
+      "env": {
+        "CELESTIAL_NODE_API_KEY": "your-api-key-here"
+      }
+    }
+  }
+}
+```
+
+**Claude Code**
+
+```bash
+claude mcp add celestial-node --env CELESTIAL_NODE_API_KEY=your-api-key-here -- npx -y celestialnode-mcp
+```
+
+## Rate Limits
+
+| Tier | Limit | Authentication |
+|------|-------|----------------|
+| Anonymous | 25 requests/hour | None |
+| Registered (free) | 100 requests/day | API key |
+| Paid | 500 requests/day | API key |
+
+Register for a free API key at [celestialnode.com/register](https://celestialnode.com/register).
 
 ## Tools
 
@@ -56,7 +113,7 @@ All data is served from [celestialnode.com](https://celestialnode.com) which agg
 
 ## Security
 
-All 18 tools are **read-only** GET requests. No authentication required, no write operations, no user data access.
+All 18 tools are **read-only** GET requests. No write operations, no user data access.
 
 ## License
 
