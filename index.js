@@ -17,10 +17,15 @@
  *     "mcpServers": {
  *       "celestial-node": {
  *         "command": "npx",
- *         "args": ["-y", "celestialnode-mcp"]
+ *         "args": ["-y", "celestialnode-mcp"],
+ *         "env": {
+ *           "CELESTIAL_NODE_API_KEY": "your-api-key-here"
+ *         }
  *       }
  *     }
  *   }
+ *
+ * Get your free API key at: https://celestialnode.com/register
  */
 
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
@@ -28,15 +33,36 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { ListToolsRequestSchema, CallToolRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 
 const API_BASE = "https://celestialnode.com/api/v1";
+const apiKey = process.env.CELESTIAL_NODE_API_KEY || null;
 
 async function fetchAPI(path) {
-  const res = await fetch(`${API_BASE}${path}`);
-  if (!res.ok) throw new Error(`API error: ${res.status} ${res.statusText}`);
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  if (apiKey) {
+    headers["Authorization"] = `Bearer ${apiKey}`;
+  }
+
+  const res = await fetch(`${API_BASE}${path}`, { headers });
+
+  if (res.status === 401) {
+    throw new Error("Invalid API key. Get yours at https://celestialnode.com/register");
+  }
+
+  if (res.status === 429) {
+    throw new Error("Rate limit exceeded. Register for higher limits: https://celestialnode.com/register");
+  }
+
+  if (!res.ok) {
+    throw new Error(`API error: ${res.status} ${res.statusText}`);
+  }
+
   return await res.json();
 }
 
 const server = new Server(
-  { name: "celestial-node", version: "1.0.0" },
+  { name: "celestial-node", version: "1.1.0" },
   { capabilities: { tools: {} } }
 );
 
@@ -193,7 +219,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const result = await tool.handler(args || {});
     return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
   } catch (error) {
-    return { content: [{ type: "text", text: `Error: ${error.message}` }], isError: true };
+    return { content: [{ type: "text", text: error.message }], isError: true };
   }
 });
 
